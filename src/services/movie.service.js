@@ -5,41 +5,41 @@ const Movie = require('../models/Movie.model.js');
 
 // 2. Função para CRIAR um novo filme
 const createMovieService = async (movieData) => {
-  // movieData é o JSON com titulo, genero, etc.
   const newMovie = await Movie.create(movieData);
   return newMovie;
 };
 
 // 3. Função para LISTAR todos os filmes
 const listAllMoviesService = async () => {
-  // --- A MÁGICA DO N:M ESTÁ AQUI ---
-  // Usamos .populate('atores') para o Mongoose trocar os IDs
-  // pelos dados completos dos atores (ex: o nome).
   const movies = await Movie.find().populate('atores');
   return movies;
 };
 
-// 4. Função para ATUALIZAR um filme
-// (Recebe o ID do filme e os novos dados)
+// --- FUNÇÃO NOVA ADICIONADA AQUI ---
+// 4. Função para BUSCAR UM filme pelo ID
+const getMovieByIdService = async (movieId) => {
+  // Encontra o filme pelo ID e também dá populate nos atores
+  const movie = await Movie.findById(movieId).populate('atores');
+  return movie;
+};
+// --- FIM DA ADIÇÃO ---
+
+// 5. Função para ATUALIZAR um filme
 const updateMovieService = async (movieId, movieData) => {
-  // Encontra o filme pelo ID e atualiza ele com os novos dados
-  // { new: true } faz ele retornar o filme JÁ ATUALIZADO.
   const updatedMovie = await Movie.findByIdAndUpdate(movieId, movieData, { new: true });
   return updatedMovie;
 };
 
-// 5. Função para DELETAR um filme
-// (Recebe o ID do filme)
+// 6. Função para DELETAR um filme
 const deleteMovieService = async (movieId) => {
-  // Encontra o filme pelo ID e deleta ele
   await Movie.findByIdAndDelete(movieId);
 };
 
-
-// 6. Exporta tudo
+// 7. Exporta tudo (com a função nova)
 module.exports = {
   createMovieService,
   listAllMoviesService,
+  getMovieByIdService, // <-- ADICIONADO AQUI
   updateMovieService,
   deleteMovieService,
 };

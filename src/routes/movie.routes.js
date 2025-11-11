@@ -1,28 +1,16 @@
 // src/routes/movie.routes.js
 const express = require('express');
-const router = express.Router(); // Cria o "roteador"
+const router = express.Router();
 
-// 1. Importar os "controllers" (garçons) dos filmes
+// 1. Importa o controller E a validação
 const movieController = require('../controllers/movie.controller.js');
+const { validateMovie } = require('../middlewares/validation.middleware.js'); // <-- LINHA NOVA
 
-// 2. Definir as rotas para o CRUD de Filmes
-
-// Rota para CRIAR um filme (Método POST)
-// URL: /api/movies/
-router.post('/', movieController.createMovieController);
-
-// Rota para LISTAR filmes (Método GET)
-// URL: /api/movies/
+// 2. Adiciona a validação nas rotas POST e PUT
+router.post('/', validateMovie, movieController.createMovieController); // <-- LINHA MODIFICADA
 router.get('/', movieController.listAllMoviesController);
-
-// Rota para ATUALIZAR um filme (Método PUT)
-// URL: /api/movies/ID_DO_FILME
-// O ':id' na URL é um parâmetro que o controller vai pegar
-router.put('/:id', movieController.updateMovieController);
-
-// Rota para DELETAR um filme (Método DELETE)
-// URL: /api/movies/ID_DO_FILME
+router.get('/:id', movieController.getMovieByIdController);
+router.put('/:id', validateMovie, movieController.updateMovieController); // <-- LINHA MODIFICADA
 router.delete('/:id', movieController.deleteMovieController);
 
-// 3. Exporta o roteador pronto
 module.exports = router;
